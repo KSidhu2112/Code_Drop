@@ -16,7 +16,7 @@ const app = express();
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors({
-  origin: ['http://localhost:5173', 'sweet-nougat-de4e24.netlify.app'], // Frontend and Admin URLs
+  origin: ['clinquant-kringle-dd3993.netlify.app', 'sweet-nougat-de4e24.netlify.app'], // Frontend and Admin URLs
   credentials: true
 }));
 
