@@ -12,6 +12,7 @@ import Dashboard from './pages/Dashboard';
 
 import AddEditPost from './pages/AddEditPost';
 import Profile from './pages/Profile';
+import Messages from './pages/Messages';
 
 const ProtectedRoute = ({ children }) => {
   const { user, loading } = useContext(AuthContext);
@@ -56,6 +57,11 @@ const AppRoutes = () => {
       <Route path="/profile" element={
         <ProtectedRoute>
           <Profile />
+        </ProtectedRoute>
+      } />
+      <Route path="/messages" element={
+        <ProtectedRoute>
+          <Messages />
         </ProtectedRoute>
       } />
     </Routes>

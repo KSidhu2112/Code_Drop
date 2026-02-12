@@ -1,7 +1,7 @@
 import { useContext, useState, useRef, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import AuthContext from '../context/AuthContext';
-import { FaHome, FaPlus, FaSignOutAlt, FaList, FaUser, FaCog } from 'react-icons/fa';
+import { FaHome, FaPlus, FaSignOutAlt, FaList, FaUser, FaCog, FaEnvelope } from 'react-icons/fa';
 
 const Sidebar = () => {
     const { user, logout } = useContext(AuthContext);
@@ -37,6 +37,10 @@ const Sidebar = () => {
                 <Link to="/add-post" className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition ${isActive('/add-post') ? 'bg-indigo-600 text-white' : 'text-gray-400 hover:bg-gray-800 hover:text-white'}`}>
                     <FaPlus />
                     <span>Add New Post</span>
+                </Link>
+                <Link to="/messages" className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition ${isActive('/messages') ? 'bg-indigo-600 text-white' : 'text-gray-400 hover:bg-gray-800 hover:text-white'}`}>
+                    <FaEnvelope />
+                    <span>Messages</span>
                 </Link>
             </nav>
             <div className="p-6 border-t border-gray-800 relative" ref={dropdownRef}>

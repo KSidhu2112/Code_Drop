@@ -1,6 +1,6 @@
 import { Link, useLocation } from 'react-router-dom';
 import { useState, useEffect, useRef } from 'react';
-import { FaBars, FaTimes, FaCode, FaLaptopCode, FaRocket, FaUser, FaSignOutAlt, FaCog } from 'react-icons/fa';
+import { FaBars, FaTimes, FaCode, FaLaptopCode, FaRocket, FaUser, FaSignOutAlt, FaCog, FaPhoneAlt, FaInfoCircle } from 'react-icons/fa';
 
 const Navbar = () => {
     const [isOpen, setIsOpen] = useState(false);
@@ -82,22 +82,32 @@ const Navbar = () => {
                                         <div className="py-1">
                                             <Link
                                                 to="/profile"
-                                                state={{ activeTab: 'details' }}
-                                                onClick={() => setIsDropdownOpen(false)}
-                                                className="group flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 transition-colors"
-                                            >
-                                                <FaUser className="mr-3 text-gray-400 group-hover:text-indigo-600 transition-colors" />
-                                                Account Details
-                                            </Link>
-
-                                            <Link
-                                                to="/profile"
                                                 state={{ activeTab: 'settings' }}
                                                 onClick={() => setIsDropdownOpen(false)}
                                                 className="group flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 transition-colors"
                                             >
                                                 <FaCog className="mr-3 text-gray-400 group-hover:text-indigo-600 transition-colors" />
                                                 Settings
+                                            </Link>
+
+                                            <div className="border-t border-gray-50 my-1"></div>
+
+                                            <Link
+                                                to="/contact-us"
+                                                onClick={() => setIsDropdownOpen(false)}
+                                                className="group flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 transition-colors"
+                                            >
+                                                <FaPhoneAlt className="mr-3 text-gray-400 group-hover:text-indigo-600 transition-colors" size={12} />
+                                                Contact Us
+                                            </Link>
+
+                                            <Link
+                                                to="/about-me"
+                                                onClick={() => setIsDropdownOpen(false)}
+                                                className="group flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 transition-colors"
+                                            >
+                                                <FaInfoCircle className="mr-3 text-gray-400 group-hover:text-indigo-600 transition-colors" />
+                                                About Me
                                             </Link>
                                         </div>
 
@@ -159,12 +169,16 @@ const Navbar = () => {
                                     </div>
                                 </div>
 
-                                <MobileNavLink to="/profile" onClick={() => setIsOpen(false)} state={{ activeTab: 'details' }}>
-                                    Account Details
-                                </MobileNavLink>
-
                                 <MobileNavLink to="/profile" onClick={() => setIsOpen(false)} state={{ activeTab: 'settings' }}>
                                     Settings
+                                </MobileNavLink>
+
+                                <MobileNavLink to="/about-me" onClick={() => setIsOpen(false)}>
+                                    About Me
+                                </MobileNavLink>
+
+                                <MobileNavLink to="/contact-us" onClick={() => setIsOpen(false)}>
+                                    Contact Us
                                 </MobileNavLink>
 
                                 <div className="border-t border-gray-100 mt-1 pt-1">
