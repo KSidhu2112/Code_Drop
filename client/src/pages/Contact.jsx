@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import toast from 'react-hot-toast';
+import api, { FRONTEND_URL } from '../config/api';
+import { FaEnvelope, FaGlobe, FaPhoneAlt, FaMapMarkerAlt } from 'react-icons/fa';
 
 const Contact = () => {
     const [formData, setFormData] = useState({
@@ -19,15 +21,8 @@ const Contact = () => {
         setLoading(true);
 
         try {
-            const response = await fetch('http://localhost:5000/api/contact', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(formData)
-            });
-
-            const data = await response.json();
+            const response = await api.post('/contact', formData);
+            const data = response.data;
 
             if (data.success) {
                 toast.success(data.message || "Message sent successfully! We'll get back to you soon.");
@@ -127,27 +122,39 @@ const Contact = () => {
                     </form>
                 </div>
 
-                <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
-                    <div className="bg-white p-6 rounded-xl shadow-md border border-gray-100">
+                <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 text-center">
+                    <div className="bg-white p-6 rounded-xl shadow-md border border-gray-100 hover:shadow-lg transition-shadow">
                         <div className="w-12 h-12 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center mx-auto mb-4 text-xl">
-                            📧
+                            <FaEnvelope />
                         </div>
                         <h3 className="font-semibold text-gray-800 mb-2">Email Us</h3>
                         <p className="text-gray-600 text-sm">support@codedrop.com</p>
                     </div>
-                    <div className="bg-white p-6 rounded-xl shadow-md border border-gray-100">
+
+                    <div className="bg-white p-6 rounded-xl shadow-md border border-gray-100 hover:shadow-lg transition-shadow">
+                        <div className="w-12 h-12 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-4 text-xl">
+                            <FaGlobe />
+                        </div>
+                        <h3 className="font-semibold text-gray-800 mb-2">Website</h3>
+                        <a href={FRONTEND_URL} target="_blank" rel="noopener noreferrer" className="text-gray-600 text-sm hover:text-indigo-600 transition-colors">
+                            {FRONTEND_URL.replace('http://', '').replace('https://', '')}
+                        </a>
+                    </div>
+
+                    <div className="bg-white p-6 rounded-xl shadow-md border border-gray-100 hover:shadow-lg transition-shadow">
                         <div className="w-12 h-12 bg-pink-100 text-pink-600 rounded-full flex items-center justify-center mx-auto mb-4 text-xl">
-                            📍
+                            <FaMapMarkerAlt />
                         </div>
                         <h3 className="font-semibold text-gray-800 mb-2">Visit Us</h3>
                         <p className="text-gray-600 text-sm">Tech Hub, Silicon Valley, CA</p>
                     </div>
-                    <div className="bg-white p-6 rounded-xl shadow-md border border-gray-100">
+
+                    <div className="bg-white p-6 rounded-xl shadow-md border border-gray-100 hover:shadow-lg transition-shadow">
                         <div className="w-12 h-12 bg-purple-100 text-purple-600 rounded-full flex items-center justify-center mx-auto mb-4 text-xl">
-                            📱
+                            <FaPhoneAlt />
                         </div>
                         <h3 className="font-semibold text-gray-800 mb-2">Call Us</h3>
-                        <p className="text-gray-600 text-sm">+1 (555) 123-4567</p>
+                        <p className="text-gray-600 text-sm">+91 9063408229</p>
                     </div>
                 </div>
             </div>

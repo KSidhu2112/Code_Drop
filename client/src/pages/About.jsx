@@ -1,5 +1,6 @@
 import React from 'react';
 import { FaLinkedin, FaCode, FaYoutube } from 'react-icons/fa';
+import { FRONTEND_URL } from '../config/api';
 
 const About = () => {
     return (
@@ -26,7 +27,7 @@ const About = () => {
                         <div className="flex justify-center space-x-6 mb-10">
                             <SocialLink href="https://linkedin.com" icon={<FaLinkedin />} />
                             <SocialLink href="https://www.youtube.com/@OurCareerBridge" icon={<FaYoutube />} />
-                            <SocialLink href="http://localhost:5173/" icon={<FaCode />} />
+                            <SocialLink href={FRONTEND_URL} icon={<FaCode />} />
                         </div>
 
                         <div className="text-left space-y-8 max-w-2xl mx-auto">
