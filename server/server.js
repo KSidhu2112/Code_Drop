@@ -16,7 +16,7 @@ const app = express();
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors({
-  origin: ['code-dropdsa.netlify.app', 'code-dropadmin.netlify.app'], // Frontend and Admin URLs
+  origin: ['https://code-dropdsa.netlify.app', 'https://code-dropadmin.netlify.app'], // Frontend and Admin URLs
   credentials: true
 }));
 
