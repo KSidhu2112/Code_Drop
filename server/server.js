@@ -21,10 +21,10 @@ app.use(cors({
 }));
 
 // Routes
-app.use('https://code-drop-g4h1.onrender.com/api/posts', require('./src/routes/postRoutes'));
-app.use('https://code-drop-g4h1.onrender.com/api/admin', require('./src/routes/adminRoutes'));
-app.use('https://code-drop-g4h1.onrender.com/api/users', require('./src/routes/userRoutes'));
-app.use('https://code-drop-g4h1.onrender.com/api/contact', require('./src/routes/contactRoutes'));
+app.use('/api/posts', require('./src/routes/postRoutes'));
+app.use('/api/admin', require('./src/routes/adminRoutes'));
+app.use('/api/users', require('./src/routes/userRoutes'));
+app.use('/api/contact', require('./src/routes/contactRoutes'));
 
 // Error Handling Middleware
 app.use((err, req, res, next) => {
