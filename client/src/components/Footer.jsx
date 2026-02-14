@@ -1,4 +1,4 @@
-import { FaInstagram, FaLinkedin, FaHeart, FaYoutube } from 'react-icons/fa';
+import { FaInstagram, FaGithub, FaLinkedin, FaHeart, FaTwitter } from 'react-icons/fa';
 
 const Footer = () => {
     return (
@@ -19,8 +19,9 @@ const Footer = () => {
                         </p>
                         <div className="flex justify-center md:justify-start space-x-4">
                             <SocialIcon href="https://www.instagram.com/our_careerbridge/" icon={<FaInstagram />} color="hover:text-pink-500" />
+                            <SocialIcon href="https://github.com/KSidhu2112" icon={<FaGithub />} color="hover:text-white" />
                             <SocialIcon href="https://www.linkedin.com/in/k-sidhu-bba3b2285" icon={<FaLinkedin />} color="hover:text-blue-500" />
-                            <SocialIcon href="https://www.youtube.com/@OurCareerBridge" icon={<FaYoutube />} color="hover:text-red-600" />
+                            <SocialIcon href="https://twitter.com" icon={<FaTwitter />} color="hover:text-sky-400" />
                         </div>
                     </div>
 
@@ -37,10 +38,10 @@ const Footer = () => {
                     <div>
                         <h4 className="text-lg font-semibold mb-6 text-pink-300">Legal & More</h4>
                         <ul className="space-y-3">
-                            <FooterLink href="/privacy-policy">Privacy Policy</FooterLink>
-                            <FooterLink href="/terms-of-service">Terms of Service</FooterLink>
-                            <FooterLink href="/contact-us">Contact Us</FooterLink>
-                            <FooterLink href="/about-me">About Me</FooterLink>
+                            <FooterLink href="#">Privacy Policy</FooterLink>
+                            <FooterLink href="#">Terms of Service</FooterLink>
+                            <FooterLink href="#">Contact Us</FooterLink>
+                            <FooterLink href="#">About Me</FooterLink>
                         </ul>
                     </div>
                 </div>
@@ -48,7 +49,7 @@ const Footer = () => {
                 <div className="border-t border-gray-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center text-gray-500 text-sm">
                     <p>&copy; {new Date().getFullYear()} CodeDrop. All rights reserved.</p>
                     <p className="mt-2 md:mt-0 flex items-center">
-                        Made with <FaHeart className="text-red-500 mx-1 animate-pulse" /> by <span className="text-indigo-400 ml-1 font-semibold">K Sidhu</span>
+                        Made with <FaHeart className="text-red-500 mx-1 animate-pulse" /> by <span className="text-indigo-400 ml-1 font-semibold">Siddu</span>
                     </p>
                 </div>
             </div>

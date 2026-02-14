@@ -16,7 +16,7 @@ const app = express();
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors({
-  origin: ['https://code-dropdsa.netlify.app', 'https://code-dropadmin.netlify.app'], // Frontend and Admin URLs
+  origin: ['http://localhost:5173', 'http://localhost:5174'], // Frontend and Admin URLs
   credentials: true
 }));
 
@@ -24,7 +24,6 @@ app.use(cors({
 app.use('/api/posts', require('./src/routes/postRoutes'));
 app.use('/api/admin', require('./src/routes/adminRoutes'));
 app.use('/api/users', require('./src/routes/userRoutes'));
-app.use('/api/contact', require('./src/routes/contactRoutes'));
 
 // Error Handling Middleware
 app.use((err, req, res, next) => {

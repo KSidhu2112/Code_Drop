@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../config/api';
 import { FaEnvelope, FaTrash, FaCheck, FaReply, FaClock, FaUser, FaInfoCircle } from 'react-icons/fa';
 import toast from 'react-hot-toast';
 
@@ -16,21 +16,17 @@ const Messages = () => {
     const fetchMessages = async () => {
         try {
             setLoading(true);
-            const userInfo = JSON.parse(localStorage.getItem('userInfo'));
-            const config = {
-                headers: {
-                    Authorization: `Bearer ${userInfo.token}`,
-                },
+            const response = await api.get('/contact', {
                 params: {
                     status: filterStatus !== 'all' ? filterStatus : undefined
                 }
-            };
-            const response = await axios.get('http://localhost:5000/api/contact', config);
+            });
             setMessages(response.data.data);
             setLoading(false);
         } catch (error) {
             console.error('Error fetching messages:', error);
-            toast.error('Failed to fetch messages');
+            const message = error.response?.data?.message || 'Failed to fetch messages';
+            toast.error(message);
             setLoading(false);
         }
     };
@@ -38,13 +34,7 @@ const Messages = () => {
     const handleDelete = async (id) => {
         if (window.confirm('Are you sure you want to delete this message?')) {
             try {
-                const userInfo = JSON.parse(localStorage.getItem('userInfo'));
-                const config = {
-                    headers: {
-                        Authorization: `Bearer ${userInfo.token}`,
-                    }
-                };
-                await axios.delete(`http://localhost:5000/api/contact/${id}`, config);
+                await api.delete(`/contact/${id}`);
                 toast.success('Message deleted');
                 fetchMessages();
                 if (selectedMessage && selectedMessage._id === id) {
@@ -58,13 +48,7 @@ const Messages = () => {
 
     const handleUpdateStatus = async (id, status) => {
         try {
-            const userInfo = JSON.parse(localStorage.getItem('userInfo'));
-            const config = {
-                headers: {
-                    Authorization: `Bearer ${userInfo.token}`,
-                }
-            };
-            await axios.put(`http://localhost:5000/api/contact/${id}`, { status }, config);
+            await api.put(`/contact/${id}`, { status });
             toast.success(`Message marked as ${status}`);
             fetchMessages();
             if (selectedMessage && selectedMessage._id === id) {

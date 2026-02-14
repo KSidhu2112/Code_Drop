@@ -7,20 +7,20 @@ const About = () => {
         <div className="bg-gray-50 min-h-screen pt-32 pb-16 px-4 sm:px-6 lg:px-8 font-outfit">
             <div className="max-w-4xl mx-auto">
                 <div className="bg-white rounded-3xl shadow-xl overflow-hidden">
-                    <div className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 h-48 sm:h-64 relative">
+                    <div className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 h-64 sm:h-80 relative">
                         <div className="absolute inset-0 bg-black/20"></div>
-                        <div className="absolute -bottom-16 left-1/2 transform -translate-x-1/2">
-                            <div className="w-32 h-32 sm:w-40 sm:h-40 rounded-full border-4 border-white overflow-hidden shadow-2xl bg-gray-200">
+                        <div className="absolute -bottom-24 left-1/2 transform -translate-x-1/2">
+                            <div className="w-40 h-40 sm:w-48 sm:h-48 rounded-full border-4 border-white overflow-hidden shadow-2xl bg-gray-200">
                                 <img
-                                    src="https://api.dicebear.com/7.x/avataaars/svg?seed=Siddu"
-                                    alt="Siddu"
-                                    className="w-full h-full object-cover"
+                                    src="/myphoto.jpg"
+                                    alt="K Sidhu"
+                                    className="w-full h-full object-cover object-top"
                                 />
                             </div>
                         </div>
                     </div>
 
-                    <div className="pt-20 px-8 pb-12 sm:px-12 text-center">
+                    <div className="pt-28 px-8 pb-12 sm:px-12 text-center">
                         <h1 className="text-4xl font-extrabold text-gray-900 mb-2">K Sidhu</h1>
                         <p className="text-xl text-indigo-600 font-medium mb-6">Full Stack Developer & DSA Enthusiast</p>
 

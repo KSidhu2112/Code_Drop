@@ -12,10 +12,6 @@ import Login from './pages/Login';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
 import Profile from './pages/Profile';
-import Privacy from './pages/Privacy';
-import Terms from './pages/Terms';
-import Contact from './pages/Contact';
-import About from './pages/About';
 
 function App() {
   return (
@@ -35,10 +31,6 @@ function App() {
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/profile" element={<Profile />} />
-            <Route path="/privacy-policy" element={<Privacy />} />
-            <Route path="/terms-of-service" element={<Terms />} />
-            <Route path="/contact-us" element={<Contact />} />
-            <Route path="/about-me" element={<About />} />
           </Routes>
         </main>
         <Footer />

@@ -13,9 +13,9 @@ const { protect, adminOnly } = require('../middlewares/authMiddleware');
 router.post('/', submitContactForm);
 
 // Admin routes - Manage contact messages
-router.get('/', protect, adminOnly, getAllContacts);
-router.get('/:id', protect, adminOnly, getContactById);
-router.put('/:id', protect, adminOnly, updateContact);
-router.delete('/:id', protect, adminOnly, deleteContact);
+router.get('/', protect, getAllContacts);
+router.get('/:id', protect, getContactById);
+router.put('/:id', protect, updateContact);
+router.delete('/:id', protect, deleteContact);
 
 module.exports = router;

@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { FaUser, FaEnvelope, FaCog, FaSave, FaArrowLeft, FaInfoCircle, FaSignOutAlt, FaPhoneAlt } from 'react-icons/fa';
+import { FaUser, FaEnvelope, FaCog, FaSave, FaArrowLeft } from 'react-icons/fa';
 import { useNavigate, useLocation } from 'react-router-dom';
 import toast from 'react-hot-toast';
 
@@ -52,12 +52,6 @@ const Profile = () => {
         toast.success('Profile updated successfully!');
     };
 
-    const handleLogout = () => {
-        localStorage.removeItem('userInfo');
-        setUser(null);
-        navigate('/login');
-    };
-
     if (!user) return null;
 
     return (
@@ -102,31 +96,6 @@ const Profile = () => {
                                     <FaCog className="mr-3" />
                                     Settings
                                 </button>
-
-                                <div className="pt-4 mt-4 border-t border-gray-100 space-y-2">
-                                    <p className="px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Support & Links</p>
-                                    <button
-                                        onClick={() => navigate('/contact-us')}
-                                        className="w-full flex items-center px-4 py-3 rounded-xl text-gray-600 hover:bg-gray-100 transition-all duration-200"
-                                    >
-                                        <FaPhoneAlt className="mr-3 text-indigo-400" />
-                                        Contact Us
-                                    </button>
-                                    <button
-                                        onClick={() => navigate('/about-me')}
-                                        className="w-full flex items-center px-4 py-3 rounded-xl text-gray-600 hover:bg-gray-100 transition-all duration-200"
-                                    >
-                                        <FaInfoCircle className="mr-3 text-purple-400" />
-                                        About Me
-                                    </button>
-                                    <button
-                                        onClick={handleLogout}
-                                        className="w-full flex items-center px-4 py-3 rounded-xl text-red-600 hover:bg-red-50 transition-all duration-200 mt-4 group"
-                                    >
-                                        <FaSignOutAlt className="mr-3 text-red-400 group-hover:text-red-600 transition-colors" />
-                                        Logout
-                                    </button>
-                                </div>
                             </div>
                         </div>
 
