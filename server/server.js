@@ -24,6 +24,7 @@ app.use(cors({
 app.use('/api/posts', require('./src/routes/postRoutes'));
 app.use('/api/admin', require('./src/routes/adminRoutes'));
 app.use('/api/users', require('./src/routes/userRoutes'));
+app.use('/api/contact', require('./src/routes/contactRoutes'));
 
 // Error Handling Middleware
 app.use((err, req, res, next) => {

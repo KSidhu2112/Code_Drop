@@ -1,5 +1,5 @@
 import React from 'react';
-import { FaLinkedin, FaCode, FaYoutube } from 'react-icons/fa';
+import { FaLinkedin, FaCode, FaYoutube, FaGithub } from 'react-icons/fa';
 import { FRONTEND_URL } from '../config/api';
 
 const About = () => {
@@ -24,8 +24,9 @@ const About = () => {
                         <h1 className="text-4xl font-extrabold text-gray-900 mb-2">K Sidhu</h1>
                         <p className="text-xl text-indigo-600 font-medium mb-6">Full Stack Developer & DSA Enthusiast</p>
 
-                        <div className="flex justify-center space-x-6 mb-10">
-                            <SocialLink href="https://linkedin.com" icon={<FaLinkedin />} />
+                        <div className="flex justify-center flex-wrap gap-6 mb-10">
+                            <SocialLink href="https://www.linkedin.com/in/k-sidhu-bba3b2285" icon={<FaLinkedin />} />
+                            <SocialLink href="https://github.com/kurvasidhu" icon={<FaGithub />} />
                             <SocialLink href="https://www.youtube.com/@OurCareerBridge" icon={<FaYoutube />} />
                             <SocialLink href={FRONTEND_URL} icon={<FaCode />} />
                         </div>

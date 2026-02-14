@@ -1,4 +1,5 @@
 import { FaInstagram, FaGithub, FaLinkedin, FaHeart, FaTwitter } from 'react-icons/fa';
+import { Link } from 'react-router-dom';
 
 const Footer = () => {
     return (
@@ -19,7 +20,7 @@ const Footer = () => {
                         </p>
                         <div className="flex justify-center md:justify-start space-x-4">
                             <SocialIcon href="https://www.instagram.com/our_careerbridge/" icon={<FaInstagram />} color="hover:text-pink-500" />
-                            <SocialIcon href="https://github.com/KSidhu2112" icon={<FaGithub />} color="hover:text-white" />
+                            <SocialIcon href="https://github.com/kurvasidhu/Dsa_FullStack" icon={<FaGithub />} color="hover:text-white" />
                             <SocialIcon href="https://www.linkedin.com/in/k-sidhu-bba3b2285" icon={<FaLinkedin />} color="hover:text-blue-500" />
                             <SocialIcon href="https://twitter.com" icon={<FaTwitter />} color="hover:text-sky-400" />
                         </div>
@@ -28,20 +29,20 @@ const Footer = () => {
                     <div>
                         <h4 className="text-lg font-semibold mb-6 text-indigo-300">Explore</h4>
                         <ul className="space-y-3">
-                            <FooterLink href="/">Home</FooterLink>
-                            <FooterLink href="/dsa">DSA Problems</FooterLink>
-                            <FooterLink href="/full-stack">Full Stack Guide</FooterLink>
-                            <FooterLink href="#">Roadmaps</FooterLink>
+                            <FooterLink to="/">Home</FooterLink>
+                            <FooterLink to="/dsa">DSA Problems</FooterLink>
+                            <FooterLink to="/full-stack">Full Stack Guide</FooterLink>
+                            <FooterLink to="#">Roadmaps</FooterLink>
                         </ul>
                     </div>
 
                     <div>
                         <h4 className="text-lg font-semibold mb-6 text-pink-300">Legal & More</h4>
                         <ul className="space-y-3">
-                            <FooterLink href="#">Privacy Policy</FooterLink>
-                            <FooterLink href="#">Terms of Service</FooterLink>
-                            <FooterLink href="#">Contact Us</FooterLink>
-                            <FooterLink href="#">About Me</FooterLink>
+                            <FooterLink to="/privacy">Privacy Policy</FooterLink>
+                            <FooterLink to="/terms">Terms of Service</FooterLink>
+                            <FooterLink to="/contact">Contact Us</FooterLink>
+                            <FooterLink to="/about">About Me</FooterLink>
                         </ul>
                     </div>
                 </div>
@@ -68,11 +69,11 @@ const SocialIcon = ({ href, icon, color }) => (
     </a>
 );
 
-const FooterLink = ({ href, children }) => (
+const FooterLink = ({ to, children }) => (
     <li>
-        <a href={href} className="text-gray-400 hover:text-white transition-colors duration-200 hover:pl-2 inline-block">
+        <Link to={to} className="text-gray-400 hover:text-white transition-colors duration-200 hover:pl-2 inline-block">
             {children}
-        </a>
+        </Link>
     </li>
 );
 
