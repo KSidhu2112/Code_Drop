@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import api from '../config/api';
-import { FaGithub, FaExternalLinkAlt, FaArrowLeft, FaCalendarAlt, FaTag, FaClock } from 'react-icons/fa';
+import { FaGithub, FaExternalLinkAlt, FaArrowLeft, FaCalendarAlt, FaTag, FaClock, FaCode } from 'react-icons/fa';
 
 const PostDetail = () => {
     const { slug } = useParams();
@@ -57,8 +57,8 @@ const PostDetail = () => {
 
                             {post.type === 'DSA' && (
                                 <span className={`px-4 py-1.5 rounded-full font-bold border ${post.difficulty === 'Easy' ? 'bg-green-50 text-green-700 border-green-100' :
-                                        post.difficulty === 'Medium' ? 'bg-yellow-50 text-yellow-700 border-yellow-100' :
-                                            'bg-red-50 text-red-700 border-red-100'
+                                    post.difficulty === 'Medium' ? 'bg-yellow-50 text-yellow-700 border-yellow-100' :
+                                        'bg-red-50 text-red-700 border-red-100'
                                     }`}>
                                     {post.difficulty}
                                 </span>
