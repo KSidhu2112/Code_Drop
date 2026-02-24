@@ -1,10 +1,12 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
+import PrivateRoute from './components/PrivateRoute';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Home from './pages/Home';
 import DSA from './pages/DSA';
 import FullStack from './pages/FullStack';
+import Contests from './pages/Contests';
 import PostDetail from './pages/PostDetail';
 import Signup from './pages/Signup';
 import VerifyOtp from './pages/VerifyOtp';
@@ -26,19 +28,24 @@ function App() {
         <main className="flex-grow">
           <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="/dsa" element={<DSA />} />
-            <Route path="/full-stack" element={<FullStack />} />
-            <Route path="/post/:slug" element={<PostDetail />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/verify-otp" element={<VerifyOtp />} />
             <Route path="/login" element={<Login />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/reset-password" element={<ResetPassword />} />
-            <Route path="/profile" element={<Profile />} />
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/privacy" element={<Privacy />} />
             <Route path="/terms" element={<Terms />} />
+
+            {/* Protected Routes */}
+            <Route element={<PrivateRoute />}>
+              <Route path="/dsa" element={<DSA />} />
+              <Route path="/full-stack" element={<FullStack />} />
+              <Route path="/contests" element={<Contests />} />
+              <Route path="/post/:slug" element={<PostDetail />} />
+              <Route path="/profile" element={<Profile />} />
+            </Route>
           </Routes>
         </main>
         <Footer />

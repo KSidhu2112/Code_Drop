@@ -1,5 +1,6 @@
 const Post = require('../models/Post');
 const User = require('../models/User');
+const Notification = require('../models/Notification');
 
 // @desc    Get all posts (public)
 // @route   GET /api/posts
@@ -95,6 +96,16 @@ const createPost = async (req, res) => {
         });
 
         if (post) {
+            // Create notification if the post is published
+            if (post.isPublished) {
+                await Notification.create({
+                    type: 'NEW_POST',
+                    title: `New ${post.type} Post`,
+                    message: post.title,
+                    postSlug: post.slug,
+                    postType: post.type
+                });
+            }
             res.status(201).json(post);
         } else {
             res.status(400).json({ message: 'Invalid post data' });
@@ -112,6 +123,8 @@ const updatePost = async (req, res) => {
         const post = await Post.findById(req.params.id);
 
         if (post) {
+            const wasPublished = post.isPublished;
+
             post.title = req.body.title || post.title;
             post.slug = req.body.slug || post.slug;
             post.type = req.body.type || post.type;
@@ -123,6 +136,18 @@ const updatePost = async (req, res) => {
             post.isPublished = req.body.isPublished !== undefined ? req.body.isPublished : post.isPublished;
 
             const updatedPost = await post.save();
+
+            // Create notification if the post was just published (wasn't published before)
+            if (!wasPublished && updatedPost.isPublished) {
+                await Notification.create({
+                    type: 'NEW_POST',
+                    title: `New ${updatedPost.type} Post`,
+                    message: updatedPost.title,
+                    postSlug: updatedPost.slug,
+                    postType: updatedPost.type
+                });
+            }
+
             res.json(updatedPost);
         } else {
             res.status(404).json({ message: 'Post not found' });
@@ -156,6 +181,7 @@ const deletePost = async (req, res) => {
 const getStats = async (req, res) => {
     try {
         const dsaCount = await Post.countDocuments({ type: 'DSA', isPublished: true });
+        const contestCount = await Post.countDocuments({ type: 'CONTEST', isPublished: true });
 
         // Tech Topics can be defined as unique tags across all published posts, 
         // or just Full Stack posts if tags are sparse. Let's use unique tags as a proxy for topics.
@@ -167,6 +193,7 @@ const getStats = async (req, res) => {
 
         res.json({
             dsaCount,
+            contestCount,
             techTopicsCount,
             activeLearnersCount
         });

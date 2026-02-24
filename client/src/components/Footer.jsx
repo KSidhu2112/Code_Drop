@@ -32,6 +32,7 @@ const Footer = () => {
                             <FooterLink to="/">Home</FooterLink>
                             <FooterLink to="/dsa">DSA Problems</FooterLink>
                             <FooterLink to="/full-stack">Full Stack Guide</FooterLink>
+                            <FooterLink to="/contests">Contests</FooterLink>
                             <FooterLink to="#">Roadmaps</FooterLink>
                         </ul>
                     </div>

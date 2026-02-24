@@ -1,12 +1,13 @@
 import { Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import api from '../config/api';
-import { FaArrowRight, FaCode, FaLaptopCode, FaRocket } from 'react-icons/fa';
+import { FaArrowRight, FaCode, FaLaptopCode, FaTrophy, FaRocket } from 'react-icons/fa';
 
 const Home = () => {
     const [latestPosts, setLatestPosts] = useState([]);
     const [stats, setStats] = useState({
         dsaCount: 0,
+        contestCount: 0,
         techTopicsCount: 0,
         activeLearnersCount: 0
     });
@@ -87,13 +88,18 @@ const Home = () => {
                                     <FaLaptopCode className="group-hover:-translate-y-1 transition-transform" />
                                     Full Stack Guide
                                 </Link>
+                                <Link to="/contests" className="btn-secondary flex items-center justify-center gap-2 group" style={{ borderColor: '#d97706', color: '#d97706' }}>
+                                    <FaTrophy className="group-hover:rotate-12 transition-transform" />
+                                    Contests
+                                </Link>
                             </div>
                         </div>
                     </div>
 
                     {/* Floating UI Elements or stats for visual flair */}
-                    <div className="mt-20 grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto opacity-90 animate-fade-in-up delay-300">
+                    <div className="mt-20 grid grid-cols-1 md:grid-cols-4 gap-6 max-w-5xl mx-auto opacity-90 animate-fade-in-up delay-300">
                         <StatCard number={stats.dsaCount} label="DSA Problems" icon={<FaCode className="text-indigo-500" />} />
+                        <StatCard number={stats.contestCount} label="Contest Problems" icon={<FaTrophy className="text-amber-500" />} />
                         <StatCard number={stats.techTopicsCount} label="Tech Topics" icon={<FaLaptopCode className="text-purple-500" />} />
                         <StatCard number={stats.activeLearnersCount} label="Active Learners" icon={<FaRocket className="text-pink-500" />} />
                     </div>
@@ -125,10 +131,10 @@ const Home = () => {
                             {latestPosts.map((post) => (
                                 <Link to={`/post/${post.slug}`} key={post._id} className="group glass-card h-full flex flex-col overflow-hidden hover:shadow-2xl hover:shadow-indigo-500/20 transition-all duration-300 hover:-translate-y-2 border-gray-100">
                                     <div className="p-8 flex flex-col flex-grow relative">
-                                        <div className={`absolute top-0 right-0 w-24 h-24 blur-2xl rounded-full opacity-20 -mr-10 -mt-10 transition-opacity group-hover:opacity-40 ${post.type === 'DSA' ? 'bg-blue-500' : 'bg-green-500'}`}></div>
+                                        <div className={`absolute top-0 right-0 w-24 h-24 blur-2xl rounded-full opacity-20 -mr-10 -mt-10 transition-opacity group-hover:opacity-40 ${post.type === 'DSA' ? 'bg-blue-500' : post.type === 'CONTEST' ? 'bg-amber-500' : 'bg-green-500'}`}></div>
 
                                         <div className="flex justify-between items-start mb-6">
-                                            <span className={`px-3 py-1 text-xs font-bold uppercase tracking-wider rounded-full ${post.type === 'DSA' ? 'bg-blue-50 text-blue-600 border border-blue-100' : 'bg-green-50 text-green-600 border border-green-100'}`}>
+                                            <span className={`px-3 py-1 text-xs font-bold uppercase tracking-wider rounded-full ${post.type === 'DSA' ? 'bg-blue-50 text-blue-600 border border-blue-100' : post.type === 'CONTEST' ? 'bg-amber-50 text-amber-600 border border-amber-100' : 'bg-green-50 text-green-600 border border-green-100'}`}>
                                                 {post.type}
                                             </span>
                                             <span className="text-gray-400 text-xs font-medium">{new Date(post.createdAt).toLocaleDateString()}</span>

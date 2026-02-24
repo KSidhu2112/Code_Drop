@@ -155,6 +155,7 @@ const AddEditPost = () => {
                         >
                             <option value="DSA">DSA</option>
                             <option value="FULLSTACK">FULLSTACK</option>
+                            <option value="CONTEST">CONTEST</option>
                         </select>
                     </div>
 

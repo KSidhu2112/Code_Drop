@@ -13,7 +13,7 @@ const postSchema = new mongoose.Schema({
     },
     type: {
         type: String,
-        enum: ['DSA', 'FULLSTACK'],
+        enum: ['DSA', 'FULLSTACK', 'CONTEST'],
         required: true
     },
     description: {

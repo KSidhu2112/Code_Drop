@@ -25,6 +25,7 @@ app.use('/api/posts', require('./src/routes/postRoutes'));
 app.use('/api/admin', require('./src/routes/adminRoutes'));
 app.use('/api/users', require('./src/routes/userRoutes'));
 app.use('/api/contact', require('./src/routes/contactRoutes'));
+app.use('/api/notifications', require('./src/routes/notificationRoutes'));
 
 // Error Handling Middleware
 app.use((err, req, res, next) => {

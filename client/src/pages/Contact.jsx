@@ -142,14 +142,6 @@ const Contact = () => {
                     </div>
 
                     <div className="bg-white p-6 rounded-xl shadow-md border border-gray-100 hover:shadow-lg transition-shadow">
-                        <div className="w-12 h-12 bg-pink-100 text-pink-600 rounded-full flex items-center justify-center mx-auto mb-4 text-xl">
-                            <FaMapMarkerAlt />
-                        </div>
-                        <h3 className="font-semibold text-gray-800 mb-2">Visit Us</h3>
-                        <p className="text-gray-600 text-sm">Tech Hub, Silicon Valley, CA</p>
-                    </div>
-
-                    <div className="bg-white p-6 rounded-xl shadow-md border border-gray-100 hover:shadow-lg transition-shadow">
                         <div className="w-12 h-12 bg-purple-100 text-purple-600 rounded-full flex items-center justify-center mx-auto mb-4 text-xl">
                             <FaPhoneAlt />
                         </div>

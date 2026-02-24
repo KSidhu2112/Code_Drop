@@ -9,7 +9,7 @@ import VerifyEmail from './pages/VerifyEmail';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
 import Dashboard from './pages/Dashboard';
-
+import Users from './pages/Users';
 import AddEditPost from './pages/AddEditPost';
 import Profile from './pages/Profile';
 
@@ -41,6 +41,11 @@ const AppRoutes = () => {
 
         <ProtectedRoute>
           <Dashboard />
+        </ProtectedRoute>
+      } />
+      <Route path="/users" element={
+        <ProtectedRoute>
+          <Users />
         </ProtectedRoute>
       } />
       <Route path="/add-post" element={

@@ -1,6 +1,7 @@
 import { Link, useLocation } from 'react-router-dom';
 import { useState, useEffect, useRef } from 'react';
-import { FaBars, FaTimes, FaCode, FaLaptopCode, FaRocket, FaUser, FaSignOutAlt, FaCog } from 'react-icons/fa';
+import { FaBars, FaTimes, FaCode, FaLaptopCode, FaTrophy, FaRocket, FaUser, FaSignOutAlt, FaCog } from 'react-icons/fa';
+import NotificationBell from './NotificationBell';
 
 const Navbar = () => {
     const [isOpen, setIsOpen] = useState(false);
@@ -56,6 +57,10 @@ const Navbar = () => {
                         <NavLink to="/" isActive={isActive('/')}>Home</NavLink>
                         <NavLink to="/dsa" isActive={isActive('/dsa')} icon={<FaCode />}>DSA</NavLink>
                         <NavLink to="/full-stack" isActive={isActive('/full-stack')} icon={<FaLaptopCode />}>Full Stack</NavLink>
+                        <NavLink to="/contests" isActive={isActive('/contests')} icon={<FaTrophy />}>Contests</NavLink>
+
+                        {/* Notification Bell */}
+                        <NotificationBell />
 
                         {user ? (
                             <div className="relative ml-4" ref={dropdownRef}>
@@ -126,8 +131,9 @@ const Navbar = () => {
                         )}
                     </div>
 
-                    {/* Mobile Menu Button */}
-                    <div className="-mr-2 flex md:hidden items-center">
+                    {/* Mobile Menu Button + Notification */}
+                    <div className="-mr-2 flex md:hidden items-center gap-2">
+                        <NotificationBell />
                         <button
                             onClick={() => setIsOpen(!isOpen)}
                             className="inline-flex items-center justify-center p-2 rounded-md text-gray-700 hover:text-indigo-600 hover:bg-indigo-50 transition duration-300 focus:outline-none"
@@ -145,6 +151,7 @@ const Navbar = () => {
                         <MobileNavLink to="/" onClick={() => setIsOpen(false)} isActive={isActive('/')}>Home</MobileNavLink>
                         <MobileNavLink to="/dsa" onClick={() => setIsOpen(false)} isActive={isActive('/dsa')}>DSA Problems</MobileNavLink>
                         <MobileNavLink to="/full-stack" onClick={() => setIsOpen(false)} isActive={isActive('/full-stack')}>Full Stack Guide</MobileNavLink>
+                        <MobileNavLink to="/contests" onClick={() => setIsOpen(false)} isActive={isActive('/contests')}>Contests</MobileNavLink>
                         {user ? (
                             <>
                                 <div className="px-4 py-2 text-gray-700 font-medium border-t border-gray-100 mt-2 bg-indigo-50/50 rounded-lg mx-2 mb-2">
