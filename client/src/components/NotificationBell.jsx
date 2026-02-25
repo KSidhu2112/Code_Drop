@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { FaBell, FaCode, FaLaptopCode, FaTrophy, FaTimes } from 'react-icons/fa';
 import api from '../config/api';
@@ -13,17 +13,17 @@ const NotificationBell = () => {
     const navigate = useNavigate();
 
     // Get user info from localStorage
-    const getUserId = () => {
+    const getUserId = useCallback(() => {
         const userInfo = localStorage.getItem('userInfo');
         if (userInfo) {
             const parsed = JSON.parse(userInfo);
             return parsed._id || parsed.id;
         }
         return null;
-    };
+    }, []);
 
     // Fetch unread count
-    const fetchUnreadCount = async () => {
+    const fetchUnreadCount = useCallback(async () => {
         try {
             const userId = getUserId();
             const params = {};
@@ -43,10 +43,10 @@ const NotificationBell = () => {
         } catch (error) {
             console.error('Error fetching unread count:', error);
         }
-    };
+    }, [getUserId]);
 
     // Fetch notifications
-    const fetchNotifications = async () => {
+    const fetchNotifications = useCallback(async () => {
         setLoading(true);
         try {
             const userId = getUserId();
@@ -68,7 +68,7 @@ const NotificationBell = () => {
         } finally {
             setLoading(false);
         }
-    };
+    }, [getUserId]);
 
     // Mark all as read
     const markAllAsRead = async () => {
@@ -102,7 +102,7 @@ const NotificationBell = () => {
         fetchUnreadCount();
         const interval = setInterval(fetchUnreadCount, 30000);
         return () => clearInterval(interval);
-    }, []);
+    }, [fetchUnreadCount]);
 
     // Close dropdown on outside click
     useEffect(() => {

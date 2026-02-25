@@ -1,0 +1,6 @@
+﻿MongoDB Connected: ac-3uxpetz-shard-00-00.fpqlv7a.mongodb.net
+Diagnostic: Found 2 admins and 2 users.
+Admin - ID: 6988d202128d9986e6122823, Email: siddusiddu5849@gmail.com, Verified: true
+Admin - ID: 698e79e9e177ee89adc6593e, Email: kharikrishna2112@gmail.com, Verified: true
+User - ID: 6989fa9cdf45b5b053f7bf23, Email: pulluripuli654@gmail.com, Verified: true
+User - ID: 698e7841e177ee89adc6593a, Email: kharikrishna2112@gmail.com, Verified: false

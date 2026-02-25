@@ -1,4 +1,4 @@
-import { useState, useContext } from 'react';
+import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import api from '../config/api';
 import { FaUserPlus } from 'react-icons/fa';
@@ -24,9 +24,13 @@ const Signup = () => {
         setError('');
 
         try {
-            await api.post('/admin/register', formData);
+            const res = await api.post('/admin/register', formData);
             // On success, navigate to verify page with email in state
-            toast.success('Admin Account created! Please verify your email.');
+            if (res.data.devMode) {
+                toast.success('Admin Account created! (DEV: Check server console for OTP)', { duration: 6000 });
+            } else {
+                toast.success('Admin Account created! Please verify your email.');
+            }
             navigate('/verify-email', { state: { email: formData.email } });
         } catch (err) {
             const message = err.response?.data?.message || 'Signup failed';

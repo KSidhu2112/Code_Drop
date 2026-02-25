@@ -3,6 +3,7 @@ const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
 const Admin = require('../models/Admin');
 const sendEmail = require('../utils/sendEmail');
+const { getOtpEmailTemplate } = require('../utils/emailTemplates');
 
 // Generate JWT
 const generateToken = (id) => {
@@ -23,32 +24,43 @@ const registerAdmin = async (req, res) => {
     const { username, email, password } = req.body;
 
     try {
-        const adminExists = await Admin.findOne({ email });
+        let admin = await Admin.findOne({ email });
 
-        if (adminExists) {
+        if (admin && admin.isVerified) {
             return res.status(400).json({ message: 'Admin already exists with this email' });
         }
 
         const otp = generateOTP();
         const otpExpires = Date.now() + 10 * 60 * 1000; // 10 minutes
 
-        const admin = await Admin.create({
-            username,
-            email,
-            password,
-            otp,
-            otpExpires,
-            isVerified: false // Not verified yet
-        });
+        if (admin) {
+            // Update existing unverified admin
+            admin.username = username;
+            admin.password = password;
+            admin.otp = otp;
+            admin.otpExpires = otpExpires;
+            await admin.save();
+        } else {
+            // Create new admin
+            admin = await Admin.create({
+                username,
+                email,
+                password,
+                otp,
+                otpExpires,
+                isVerified: false
+            });
+        }
 
         // Send OTP email
-        const message = `Your OTP for registration is: ${otp}`;
+        const plainText = `Your email verification OTP is: ${otp}. It expires in 10 minutes.`;
+        const html = getOtpEmailTemplate(otp, 'verify', admin.username);
         try {
             await sendEmail({
                 email: admin.email,
                 subject: 'Verify your email - Admin Panel',
-                message,
-                html: `<h3>Your verify OTP: <b>${otp}</b></h3>` // Simple HTML
+                message: plainText,
+                html
             });
 
             res.status(201).json({
@@ -56,10 +68,18 @@ const registerAdmin = async (req, res) => {
                 email: admin.email,
             });
         } catch (error) {
-            console.error(error);
-            // Delete user if email fails? Maybe keep but allow resend?
-            // For simplicity, keep user but they can't login without verify.
-            res.status(500).json({ message: 'Email could not be sent' });
+            console.error('Email Error:', error.message);
+            console.log('--- DEVELOPMENT OTP ---');
+            console.log(`Email: ${admin.email}`);
+            console.log(`OTP: ${otp}`);
+            console.log('-----------------------');
+
+            // In dev mode, we still return 201 so the user can proceed by checking console
+            res.status(201).json({
+                message: 'Admin registered. (Email delivery failed, check server console for OTP)',
+                email: admin.email,
+                devMode: true
+            });
         }
 
     } catch (error) {
@@ -163,22 +183,30 @@ const forgotPassword = async (req, res) => {
         admin.otpExpires = otpExpires;
         await admin.save();
 
-        const message = `Your OTP for password reset is: ${otp}`;
+        const plainText = `Your password reset OTP is: ${otp}. It expires in 10 minutes.`;
+        const html = getOtpEmailTemplate(otp, 'reset', admin.username);
 
         try {
             await sendEmail({
                 email: admin.email,
-                subject: 'Password Reset OTP',
-                message,
-                html: `<h3>Your Password Reset OTP: <b>${otp}</b></h3>`
+                subject: 'Password Reset OTP - Admin Panel',
+                message: plainText,
+                html
             });
 
-            res.json({ message: 'OTP sent to email' });
+            res.json({ message: 'OTP sent to your email successfully.' });
         } catch (error) {
-            admin.otp = undefined;
-            admin.otpExpires = undefined;
-            await admin.save();
-            res.status(500).json({ message: 'Email could not be sent' });
+            // Email delivery failed (e.g. no SMTP config) — log OTP to console for dev use
+            console.error('Email Error:', error.message);
+            console.log('--- DEVELOPMENT OTP (Admin Forgot Password) ---');
+            console.log(`Email: ${admin.email}`);
+            console.log(`OTP: ${otp}`);
+            console.log('-----------------------------------------------');
+
+            res.json({
+                message: 'OTP sent to email. (Email delivery failed, check server console for OTP)',
+                devMode: true
+            });
         }
     } catch (error) {
         res.status(500).json({ message: error.message });

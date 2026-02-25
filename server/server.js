@@ -35,6 +35,17 @@ app.use((err, req, res, next) => {
 
 const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+const server = app.listen(PORT, () => {
+  console.log(`✅ Server running on port ${PORT}`);
+});
+
+server.on('error', (err) => {
+  if (err.code === 'EADDRINUSE') {
+    console.error(`\n❌ Port ${PORT} is already in use!`);
+    console.error(`   Run this command to free it, then try again:`);
+    console.error(`   npx kill-port ${PORT}\n`);
+  } else {
+    console.error('Server error:', err.message);
+  }
+  process.exit(1);
 });

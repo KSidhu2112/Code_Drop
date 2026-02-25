@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const {
     getPosts,
+    getPostsAdmin,
     getPostBySlug,
     createPost,
     updatePost,
@@ -10,7 +11,7 @@ const {
     getPostById,
     getStats
 } = require('../controllers/postController');
-const { protect } = require('../middlewares/authMiddleware');
+const { protect, adminOnly } = require('../middlewares/authMiddleware');
 
 // Public routes
 router.get('/', getPosts);
@@ -21,8 +22,9 @@ router.get('/type/:type', getPostsByType);
 
 
 // Admin routes (Protected)
-router.post('/', protect, createPost);
-router.put('/:id', protect, updatePost);
-router.delete('/:id', protect, deletePost);
+router.get('/admin/all', protect, adminOnly, getPostsAdmin);
+router.post('/', protect, adminOnly, createPost);
+router.put('/:id', protect, adminOnly, updatePost);
+router.delete('/:id', protect, adminOnly, deletePost);
 
 module.exports = router;

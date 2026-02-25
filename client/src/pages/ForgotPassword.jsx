@@ -1,108 +1,319 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import api from '../config/api';
+import toast from 'react-hot-toast';
 
 const ForgotPassword = () => {
     const [email, setEmail] = useState('');
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
-    const [success, setSuccess] = useState(false);
+    const [sent, setSent] = useState(false);
+    const [devMode, setDevMode] = useState(false);
     const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
         setError('');
-        setSuccess(false);
 
         try {
-            await api.post('/users/forgot-password', { email });
-            setSuccess(true);
+            const res = await api.post('/users/forgot-password', { email });
+            setSent(true);
             setLoading(false);
 
-            // Redirect to reset password page after a short delay
+            if (res.data.devMode) {
+                setDevMode(true);
+                toast.success('DEV MODE: Check server console for OTP!', { duration: 6000 });
+            } else {
+                toast.success('OTP sent to your email!');
+            }
+
             setTimeout(() => {
                 navigate(`/reset-password?email=${encodeURIComponent(email)}`);
-            }, 2000);
+            }, 3000);
         } catch (err) {
             setLoading(false);
-            setError(err.response?.data?.message || 'Something went wrong');
+            const msg = err.response?.data?.message || 'Something went wrong';
+            setError(msg);
+            toast.error(msg);
         }
     };
 
     return (
-        <div className="min-h-[80vh] flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-            <div className="max-w-md w-full space-y-8 bg-white p-8 rounded-xl shadow-lg border border-gray-100">
-                <div>
-                    <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-                        Forgot Password
-                    </h2>
-                    <p className="mt-2 text-center text-sm text-gray-600">
-                        Enter your email address to receive an OTP for password reset.
+        <div style={styles.page}>
+            <div style={styles.blob1} />
+            <div style={styles.blob2} />
+
+            <div style={styles.card}>
+                <div style={styles.header}>
+                    <div style={styles.logoIcon}>🔐</div>
+                    <h1 style={styles.title}>Forgot Password?</h1>
+                    <p style={styles.subtitle}>
+                        Enter your email and we'll send you a reset OTP
                     </p>
                 </div>
 
-                {success ? (
-                    <div className="rounded-md bg-green-50 p-4">
-                        <div className="flex">
-                            <div className="flex-shrink-0">
-                                <svg className="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
-                                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                                </svg>
-                            </div>
-                            <div className="ml-3">
-                                <p className="text-sm font-medium text-green-800">
-                                    OTP sent successfully! Redirecting...
-                                </p>
-                            </div>
+                {sent ? (
+                    <div style={devMode ? styles.devAlert : styles.successAlert}>
+                        <div style={styles.alertIcon}>{devMode ? '⚠️' : '📬'}</div>
+                        <div>
+                            <p style={styles.alertTitle}>
+                                {devMode ? 'Dev Mode Active' : 'OTP Sent!'}
+                            </p>
+                            <p style={styles.alertMsg}>
+                                {devMode
+                                    ? 'Email not configured. Check the server terminal for your OTP. Redirecting...'
+                                    : `A reset OTP was sent to ${email}. Redirecting to reset page...`
+                                }
+                            </p>
                         </div>
                     </div>
                 ) : (
-                    <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+                    <>
                         {error && (
-                            <div className="bg-red-50 border-l-4 border-red-400 p-4 mb-4">
-                                <p className="text-sm text-red-700">{error}</p>
+                            <div style={styles.errorBox}>
+                                <span>⚠️</span>
+                                <span style={styles.errorText}>{error}</span>
                             </div>
                         )}
-                        <div className="rounded-md shadow-sm -space-y-px">
-                            <div>
-                                <label htmlFor="email-address" className="sr-only">
-                                    Email address
-                                </label>
-                                <input
-                                    id="email-address"
-                                    name="email"
-                                    type="email"
-                                    autoComplete="email"
-                                    required
-                                    className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                                    placeholder="Email address"
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
-                                />
+
+                        <form onSubmit={handleSubmit} style={styles.form}>
+                            <div style={styles.fieldGroup}>
+                                <label style={styles.label} htmlFor="forgot-email">Email Address</label>
+                                <div style={styles.inputWrapper}>
+                                    <span style={styles.inputIcon}>✉️</span>
+                                    <input
+                                        id="forgot-email"
+                                        name="email"
+                                        type="email"
+                                        autoComplete="email"
+                                        required
+                                        placeholder="you@example.com"
+                                        value={email}
+                                        onChange={e => setEmail(e.target.value)}
+                                        style={styles.input}
+                                        onFocus={e => e.target.parentElement.style.borderColor = '#6366f1'}
+                                        onBlur={e => e.target.parentElement.style.borderColor = '#e2e8f0'}
+                                    />
+                                </div>
                             </div>
-                        </div>
 
-                        <div className="text-sm">
-                            <Link to="/login" className="font-medium text-indigo-600 hover:text-indigo-500">
-                                Back to Sign in
-                            </Link>
-                        </div>
-
-                        <div>
                             <button
                                 type="submit"
                                 disabled={loading}
-                                className={`group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 ${loading ? 'opacity-70 cursor-not-allowed' : ''}`}
+                                id="forgot-password-btn"
+                                style={{
+                                    ...styles.submitBtn,
+                                    opacity: loading ? 0.75 : 1,
+                                    cursor: loading ? 'not-allowed' : 'pointer',
+                                }}
                             >
-                                {loading ? 'Sending OTP...' : 'Send OTP'}
+                                {loading ? (
+                                    <span style={styles.btnContent}>
+                                        <span style={styles.spinner} />
+                                        Sending OTP...
+                                    </span>
+                                ) : (
+                                    <span style={styles.btnContent}>📨 Send Reset OTP</span>
+                                )}
                             </button>
-                        </div>
-                    </form>
+                        </form>
+                    </>
                 )}
+
+                <div style={styles.backRow}>
+                    <Link to="/login" style={styles.backLink}>← Back to Sign In</Link>
+                </div>
             </div>
         </div>
     );
+};
+
+const styles = {
+    page: {
+        minHeight: '100vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        background: 'linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%)',
+        padding: '40px 20px',
+        position: 'relative',
+        overflow: 'hidden',
+    },
+    blob1: {
+        position: 'absolute',
+        top: '-80px',
+        right: '-60px',
+        width: '280px',
+        height: '280px',
+        borderRadius: '50%',
+        background: 'rgba(99,102,241,0.1)',
+        pointerEvents: 'none',
+    },
+    blob2: {
+        position: 'absolute',
+        bottom: '-60px',
+        left: '-50px',
+        width: '240px',
+        height: '240px',
+        borderRadius: '50%',
+        background: 'rgba(45,212,191,0.08)',
+        pointerEvents: 'none',
+    },
+    card: {
+        background: '#ffffff',
+        borderRadius: '24px',
+        padding: '48px 40px',
+        width: '100%',
+        maxWidth: '440px',
+        boxShadow: '0 32px 64px rgba(0,0,0,0.4)',
+        position: 'relative',
+        zIndex: 1,
+    },
+    header: {
+        textAlign: 'center',
+        marginBottom: '32px',
+    },
+    logoIcon: {
+        fontSize: '40px',
+        marginBottom: '12px',
+    },
+    title: {
+        fontSize: '28px',
+        fontWeight: '800',
+        color: '#1a1a2e',
+        margin: '0 0 8px',
+        letterSpacing: '-0.5px',
+    },
+    subtitle: {
+        fontSize: '15px',
+        color: '#6b7280',
+        margin: 0,
+    },
+    successAlert: {
+        display: 'flex',
+        gap: '14px',
+        background: '#f0fdf4',
+        border: '1px solid #bbf7d0',
+        borderRadius: '14px',
+        padding: '18px',
+        marginBottom: '24px',
+    },
+    devAlert: {
+        display: 'flex',
+        gap: '14px',
+        background: '#fffbeb',
+        border: '1px solid #fde68a',
+        borderRadius: '14px',
+        padding: '18px',
+        marginBottom: '24px',
+    },
+    alertIcon: {
+        fontSize: '26px',
+        flexShrink: 0,
+    },
+    alertTitle: {
+        fontWeight: '700',
+        color: '#166534',
+        fontSize: '15px',
+        marginBottom: '4px',
+    },
+    alertMsg: {
+        color: '#15803d',
+        fontSize: '13px',
+        lineHeight: '1.5',
+        margin: 0,
+    },
+    errorBox: {
+        display: 'flex',
+        alignItems: 'center',
+        gap: '10px',
+        background: '#fef2f2',
+        border: '1px solid #fecaca',
+        borderRadius: '12px',
+        padding: '12px 16px',
+        marginBottom: '20px',
+    },
+    errorText: {
+        color: '#dc2626',
+        fontSize: '14px',
+        fontWeight: '500',
+    },
+    form: {
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '20px',
+    },
+    fieldGroup: {
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '6px',
+    },
+    label: {
+        fontSize: '14px',
+        fontWeight: '600',
+        color: '#374151',
+    },
+    inputWrapper: {
+        display: 'flex',
+        alignItems: 'center',
+        border: '2px solid #e2e8f0',
+        borderRadius: '12px',
+        padding: '0 14px',
+        transition: 'border-color 0.2s',
+        background: '#fafafa',
+    },
+    inputIcon: {
+        fontSize: '16px',
+        marginRight: '10px',
+        flexShrink: 0,
+    },
+    input: {
+        flex: 1,
+        border: 'none',
+        outline: 'none',
+        background: 'transparent',
+        padding: '13px 0',
+        fontSize: '15px',
+        color: '#1f2937',
+    },
+    submitBtn: {
+        width: '100%',
+        padding: '14px',
+        background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
+        color: '#ffffff',
+        border: 'none',
+        borderRadius: '12px',
+        fontSize: '16px',
+        fontWeight: '700',
+        cursor: 'pointer',
+        boxShadow: '0 4px 15px rgba(99, 102, 241, 0.4)',
+    },
+    btnContent: {
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: '8px',
+    },
+    spinner: {
+        width: '18px',
+        height: '18px',
+        border: '2px solid rgba(255,255,255,0.3)',
+        borderTopColor: '#fff',
+        borderRadius: '50%',
+        display: 'inline-block',
+        animation: 'spin 0.8s linear infinite',
+    },
+    backRow: {
+        textAlign: 'center',
+        marginTop: '24px',
+    },
+    backLink: {
+        color: '#6b7280',
+        fontSize: '14px',
+        textDecoration: 'none',
+        fontWeight: '500',
+    },
 };
 
 export default ForgotPassword;

@@ -6,7 +6,10 @@ import NotificationBell from './NotificationBell';
 const Navbar = () => {
     const [isOpen, setIsOpen] = useState(false);
     const location = useLocation();
-    const [user, setUser] = useState(null);
+    const [user, setUser] = useState(() => {
+        const userInfo = localStorage.getItem('userInfo');
+        return userInfo ? JSON.parse(userInfo) : null;
+    });
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const dropdownRef = useRef(null);
 
@@ -25,9 +28,15 @@ const Navbar = () => {
     useEffect(() => {
         const userInfo = localStorage.getItem('userInfo');
         if (userInfo) {
-            setUser(JSON.parse(userInfo));
+            const parsed = JSON.parse(userInfo);
+            // Only update if different to avoid redundant renders
+            if (JSON.stringify(parsed) !== JSON.stringify(user)) {
+                setUser(parsed);
+            }
+        } else if (user) {
+            setUser(null);
         }
-    }, [location]); // Re-check on route change
+    }, [location, user]); // Re-check on route change
 
     const handleLogout = () => {
         localStorage.removeItem('userInfo');
@@ -59,8 +68,8 @@ const Navbar = () => {
                         <NavLink to="/full-stack" isActive={isActive('/full-stack')} icon={<FaLaptopCode />}>Full Stack</NavLink>
                         <NavLink to="/contests" isActive={isActive('/contests')} icon={<FaTrophy />}>Contests</NavLink>
 
-                        {/* Notification Bell */}
-                        <NotificationBell />
+                        {/* Notification Bell — only for logged-in users */}
+                        {user && <NotificationBell />}
 
                         {user ? (
                             <div className="relative ml-4" ref={dropdownRef}>
@@ -133,7 +142,7 @@ const Navbar = () => {
 
                     {/* Mobile Menu Button + Notification */}
                     <div className="-mr-2 flex md:hidden items-center gap-2">
-                        <NotificationBell />
+                        {user && <NotificationBell />}
                         <button
                             onClick={() => setIsOpen(!isOpen)}
                             className="inline-flex items-center justify-center p-2 rounded-md text-gray-700 hover:text-indigo-600 hover:bg-indigo-50 transition duration-300 focus:outline-none"

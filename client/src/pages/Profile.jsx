@@ -5,34 +5,53 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import toast from 'react-hot-toast';
 
 const Profile = () => {
-    const [user, setUser] = useState(null);
     const location = useLocation();
-    const [activeTab, setActiveTab] = useState('details');
-    const [formData, setFormData] = useState({
-        username: '',
-        email: ''
-    });
     const navigate = useNavigate();
 
-    useEffect(() => {
-        if (location.state && location.state.activeTab) {
-            setActiveTab(location.state.activeTab);
-        }
-    }, [location]);
+    const [user, setUser] = useState(() => {
+        const userInfo = localStorage.getItem('userInfo');
+        return userInfo ? JSON.parse(userInfo) : null;
+    });
 
-    useEffect(() => {
+    const [activeTab, setActiveTab] = useState(() => {
+        return (location.state && location.state.activeTab) || 'details';
+    });
+
+    const [formData, setFormData] = useState(() => {
         const userInfo = localStorage.getItem('userInfo');
         if (userInfo) {
             const parsedUser = JSON.parse(userInfo);
-            setUser(parsedUser);
-            setFormData({
+            return {
                 username: parsedUser.username || '',
                 email: parsedUser.email || ''
-            });
-        } else {
-            navigate('/login');
+            };
         }
-    }, [navigate]);
+        return { username: '', email: '' };
+    });
+
+    useEffect(() => {
+        if (!user) {
+            const userInfo = localStorage.getItem('userInfo');
+            if (!userInfo) {
+                navigate('/login');
+            } else {
+                const parsedUser = JSON.parse(userInfo);
+                setUser(parsedUser);
+                setFormData({
+                    username: parsedUser.username || '',
+                    email: parsedUser.email || ''
+                });
+            }
+        }
+    }, [user, navigate]);
+
+    useEffect(() => {
+        if (location.state && location.state.activeTab) {
+            if (location.state.activeTab !== activeTab) {
+                setActiveTab(location.state.activeTab);
+            }
+        }
+    }, [location.state, activeTab]);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;

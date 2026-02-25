@@ -4,16 +4,21 @@ import api from '../config/api';
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-    const [user, setUser] = useState(null);
-    const [loading, setLoading] = useState(true);
+    const [user, setUser] = useState(() => {
+        const userInfo = localStorage.getItem('userInfo');
+        return userInfo ? JSON.parse(userInfo) : null;
+    });
+    const [loading, setLoading] = useState(!localStorage.getItem('userInfo'));
 
     useEffect(() => {
-        const userInfo = localStorage.getItem('userInfo');
-        if (userInfo) {
-            setUser(JSON.parse(userInfo));
+        if (loading) {
+            const userInfo = localStorage.getItem('userInfo');
+            if (userInfo) {
+                setUser(JSON.parse(userInfo));
+            }
+            setLoading(false);
         }
-        setLoading(false);
-    }, []);
+    }, [loading]);
 
     const login = async (email, password) => {
         try {

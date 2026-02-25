@@ -14,6 +14,18 @@ const getPosts = async (req, res) => {
     }
 };
 
+// @desc    Get all posts (Admin - includes unpublished)
+// @route   GET /api/posts/admin
+// @access  Private/Admin
+const getPostsAdmin = async (req, res) => {
+    try {
+        const posts = await Post.find({}).sort({ createdAt: -1 });
+        res.json(posts);
+    } catch (error) {
+        res.status(500).json({ message: 'Server Error' });
+    }
+};
+
 // @desc    Get single post by slug
 // @route   GET /api/posts/:slug
 // @access  Public
@@ -205,6 +217,7 @@ const getStats = async (req, res) => {
 
 module.exports = {
     getPosts,
+    getPostsAdmin,
     getPostBySlug,
     getPostsByType,
     getPostById,

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import api from '../config/api';
 import { FaEnvelope, FaTrash, FaCheck, FaReply, FaClock, FaUser, FaInfoCircle } from 'react-icons/fa';
 import toast from 'react-hot-toast';
@@ -9,11 +9,7 @@ const Messages = () => {
     const [selectedMessage, setSelectedMessage] = useState(null);
     const [filterStatus, setFilterStatus] = useState('all');
 
-    useEffect(() => {
-        fetchMessages();
-    }, [filterStatus]);
-
-    const fetchMessages = async () => {
+    const fetchMessages = useCallback(async () => {
         try {
             setLoading(true);
             const response = await api.get('/contact', {
@@ -29,7 +25,11 @@ const Messages = () => {
             toast.error(message);
             setLoading(false);
         }
-    };
+    }, [filterStatus]);
+
+    useEffect(() => {
+        fetchMessages();
+    }, [fetchMessages]);
 
     const handleDelete = async (id) => {
         if (window.confirm('Are you sure you want to delete this message?')) {
@@ -40,7 +40,7 @@ const Messages = () => {
                 if (selectedMessage && selectedMessage._id === id) {
                     setSelectedMessage(null);
                 }
-            } catch (error) {
+            } catch {
                 toast.error('Failed to delete message');
             }
         }
@@ -54,7 +54,7 @@ const Messages = () => {
             if (selectedMessage && selectedMessage._id === id) {
                 setSelectedMessage({ ...selectedMessage, status });
             }
-        } catch (error) {
+        } catch {
             toast.error('Failed to update status');
         }
     };

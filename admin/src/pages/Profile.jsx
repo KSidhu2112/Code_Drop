@@ -6,23 +6,28 @@ import AuthContext from '../context/AuthContext';
 import toast from 'react-hot-toast';
 
 const Profile = () => {
-    const { user, login } = useContext(AuthContext); // user from context might not update immediately if we just change local state, so we might need a way to update context or just rely on local state for the form
-    // Actually, updating the context user would be better. For now, let's stick to the pattern used in the client app.
-
-    // We'll use local state for the form display and editing, initialized from context or localStorage
-    const [localUser, setLocalUser] = useState(user);
+    const { user } = useContext(AuthContext);
     const location = useLocation();
-    const [activeTab, setActiveTab] = useState('details');
-    const [formData, setFormData] = useState({
-        username: '',
-        email: ''
+
+    // We'll use local state for the form display and editing, initialized from context
+    const [localUser, setLocalUser] = useState(user);
+    const [activeTab, setActiveTab] = useState(() => {
+        return (location.state && location.state.activeTab) || 'details';
+    });
+    const [formData, setFormData] = useState(() => {
+        return {
+            username: user?.username || '',
+            email: user?.email || ''
+        };
     });
 
     useEffect(() => {
         if (location.state && location.state.activeTab) {
-            setActiveTab(location.state.activeTab);
+            if (location.state.activeTab !== activeTab) {
+                setActiveTab(location.state.activeTab);
+            }
         }
-    }, [location]);
+    }, [location.state, activeTab]);
 
     useEffect(() => {
         if (user) {

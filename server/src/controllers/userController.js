@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 const sendEmail = require('../utils/sendEmail');
+const { getOtpEmailTemplate } = require('../utils/emailTemplates');
 
 // Generate JWT
 const generateToken = (id) => {
@@ -14,52 +15,101 @@ const generateOTP = () => {
     return Math.floor(100000 + Math.random() * 900000).toString(); // 6 digit OTP
 };
 
+// Helper: send OTP email with fallback logging
+const sendOtpEmail = async ({ email, username, otp, type }) => {
+    const subject = type === 'verify'
+        ? 'Verify your email - CodeDrop'
+        : 'Password Reset OTP - CodeDrop';
+
+    const plainText = type === 'verify'
+        ? `Your email verification OTP is: ${otp}. It expires in 10 minutes.`
+        : `Your password reset OTP is: ${otp}. It expires in 10 minutes.`;
+
+    const html = getOtpEmailTemplate(otp, type, username);
+
+    try {
+        await sendEmail({ email, subject, message: plainText, html });
+        return { success: true };
+    } catch (error) {
+        console.error('📧 Email Error:', error.message);
+        console.log('--- DEVELOPMENT OTP ---');
+        console.log(`📧 Email: ${email}`);
+        console.log(`🔑 OTP: ${otp}`);
+        console.log(`📋 Type: ${type}`);
+        console.log('-----------------------');
+        return { success: false, devMode: true };
+    }
+};
+
 // @desc    Register a new user
 // @route   POST /api/users/register
 // @access  Public
 const registerUser = async (req, res) => {
     const { username, email, password } = req.body;
 
-    try {
-        const userExists = await User.findOne({ email });
+    if (!username || !email || !password) {
+        return res.status(400).json({ message: 'Username, email and password are required.' });
+    }
 
-        if (userExists) {
-            return res.status(400).json({ message: 'User already exists with this email' });
+    try {
+        // Check if email already exists and is verified
+        let user = await User.findOne({ email });
+        if (user && user.isVerified) {
+            return res.status(400).json({ message: 'An account with this email already exists. Please login.' });
+        }
+
+        // Check if username is already taken by any OTHER verified user
+        const takenByOther = await User.findOne({ username, isVerified: true, email: { $ne: email } });
+        if (takenByOther) {
+            return res.status(400).json({ message: 'This username is already taken. Please choose another.' });
         }
 
         const otp = generateOTP();
         const otpExpires = Date.now() + 10 * 60 * 1000; // 10 minutes
 
-        const user = await User.create({
-            username,
-            email,
-            password,
-            otp,
-            otpExpires,
-            isVerified: false // Not verified yet
-        });
-
-        // Send OTP email
-        const message = `Your OTP for registration is: ${otp}`;
-        try {
-            await sendEmail({
-                email: user.email,
-                subject: 'Verify your email - CodeDrop',
-                message,
-                html: `<h3>Your verify OTP: <b>${otp}</b></h3>` // Simple HTML
+        if (user) {
+            // Update existing unverified user
+            user.username = username;
+            user.password = password;
+            user.otp = otp;
+            user.otpExpires = otpExpires;
+            await user.save();
+        } else {
+            // Create new user
+            user = await User.create({
+                username,
+                email,
+                password,
+                otp,
+                otpExpires,
+                isVerified: false
             });
-
-            res.status(201).json({
-                message: 'User registered. Please verify your email with the OTP sent.',
-                email: user.email,
-            });
-        } catch (error) {
-            console.error(error);
-            // In a production application, you might want to rollback user creation here.
-            res.status(500).json({ message: 'Email could not be sent' });
         }
 
+        const emailResult = await sendOtpEmail({
+            email: user.email,
+            username: user.username,
+            otp,
+            type: 'verify'
+        });
+
+        res.status(201).json({
+            message: emailResult.devMode
+                ? 'User registered. (Email delivery failed, check server console for OTP)'
+                : 'User registered. Please verify your email with the OTP sent.',
+            email: user.email,
+            devMode: emailResult.devMode || false
+        });
+
     } catch (error) {
+        console.error('Register error:', error.message);
+        // MongoDB duplicate key — return 400 with a friendly message instead of 500
+        if (error.code === 11000) {
+            const field = Object.keys(error.keyPattern || {})[0];
+            if (field === 'email') return res.status(400).json({ message: 'An account with this email already exists.' });
+            if (field === 'username') return res.status(400).json({ message: 'This username is already taken. Please choose another.' });
+            return res.status(400).json({ message: 'A duplicate value was detected. Please try again with different details.' });
+        }
         res.status(500).json({ message: error.message });
     }
 };
@@ -103,6 +153,49 @@ const verifyUserEmail = async (req, res) => {
     }
 };
 
+// @desc    Resend OTP for email verification
+// @route   POST /api/users/resend-otp
+// @access  Public
+const resendOtp = async (req, res) => {
+    const { email } = req.body;
+
+    try {
+        const user = await User.findOne({ email });
+
+        if (!user) {
+            return res.status(400).json({ message: 'No account found with this email' });
+        }
+
+        if (user.isVerified) {
+            return res.status(400).json({ message: 'Email is already verified. Please login.' });
+        }
+
+        const otp = generateOTP();
+        const otpExpires = Date.now() + 10 * 60 * 1000;
+
+        user.otp = otp;
+        user.otpExpires = otpExpires;
+        await user.save();
+
+        const emailResult = await sendOtpEmail({
+            email: user.email,
+            username: user.username,
+            otp,
+            type: 'verify'
+        });
+
+        res.json({
+            message: emailResult.devMode
+                ? 'OTP resent. (Email delivery failed, check server console for OTP)'
+                : 'A new OTP has been sent to your email.',
+            devMode: emailResult.devMode || false
+        });
+
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
 // @desc    Auth user & get token
 // @route   POST /api/users/login
 // @access  Public
@@ -110,13 +203,15 @@ const loginUser = async (req, res) => {
     const { email, password } = req.body;
 
     try {
-        // Find by email or username (optional, stick to email for now)
         const user = await User.findOne({ email });
 
         if (user && (await user.matchPassword(password))) {
-            // Check if verified
             if (!user.isVerified) {
-                return res.status(401).json({ message: 'Please verify your email first.' });
+                return res.status(401).json({
+                    message: 'Please verify your email first.',
+                    needsVerification: true,
+                    email: user.email
+                });
             }
 
             res.json({
@@ -143,7 +238,7 @@ const forgotUserPassword = async (req, res) => {
         const user = await User.findOne({ email });
 
         if (!user) {
-            return res.status(404).json({ message: 'User not found' });
+            return res.status(404).json({ message: 'No account found with this email' });
         }
 
         const otp = generateOTP();
@@ -153,23 +248,20 @@ const forgotUserPassword = async (req, res) => {
         user.otpExpires = otpExpires;
         await user.save();
 
-        const message = `Your OTP for password reset is: ${otp}`;
+        const emailResult = await sendOtpEmail({
+            email: user.email,
+            username: user.username,
+            otp,
+            type: 'reset'
+        });
 
-        try {
-            await sendEmail({
-                email: user.email,
-                subject: 'Password Reset OTP - CodeDrop',
-                message,
-                html: `<h3>Your Password Reset OTP: <b>${otp}</b></h3>`
-            });
+        res.json({
+            message: emailResult.devMode
+                ? 'OTP sent to email. (Email delivery failed, check server console for OTP)'
+                : 'OTP sent to your email successfully.',
+            devMode: emailResult.devMode || false
+        });
 
-            res.json({ message: 'OTP sent to email' });
-        } catch (error) {
-            user.otp = undefined;
-            user.otpExpires = undefined;
-            await user.save();
-            res.status(500).json({ message: 'Email could not be sent' });
-        }
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
@@ -221,7 +313,7 @@ const getAllUsers = async (req, res) => {
 const deleteUser = async (req, res) => {
     try {
         const user = await User.findByIdAndDelete(req.params.id);
-        
+
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
         }
@@ -235,6 +327,7 @@ const deleteUser = async (req, res) => {
 module.exports = {
     registerUser,
     verifyUserEmail,
+    resendOtp,
     loginUser,
     forgotUserPassword,
     resetUserPassword,

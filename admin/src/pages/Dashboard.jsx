@@ -13,7 +13,7 @@ const Dashboard = () => {
 
     const fetchPosts = async () => {
         try {
-            const { data } = await api.get('/posts');
+            const { data } = await api.get('/posts/admin/all');
             setPosts(data);
         } catch (error) {
             console.error(error);
@@ -27,7 +27,7 @@ const Dashboard = () => {
             try {
                 await api.delete(`/posts/${id}`);
                 setPosts(posts.filter((post) => post._id !== id));
-            } catch (error) {
+            } catch {
                 alert('Failed to delete post');
             }
         }
@@ -38,7 +38,7 @@ const Dashboard = () => {
             const updatedPost = { ...post, isPublished: !post.isPublished };
             await api.put(`/posts/${post._id}`, updatedPost);
             setPosts(posts.map((p) => (p._id === post._id ? updatedPost : p)));
-        } catch (error) {
+        } catch {
             alert('Failed to update status');
         }
     };
