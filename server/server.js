@@ -12,20 +12,36 @@ connectDB();
 
 const app = express();
 
-// Middleware
-app.use(express.json());
-app.use(cookieParser());
+// Load allowed origins
 const allowedOrigins = process.env.ALLOWED_ORIGINS
-  ? process.env.ALLOWED_ORIGINS.split(',').map(o => o.trim())
+  ? process.env.ALLOWED_ORIGINS.split(',').map(o => o.trim()).filter(Boolean)
   : [
     'https://code-dropdsa.netlify.app',
     'https://code-dropadmin.netlify.app'
   ];
 
+console.log('Allowed Origins:', allowedOrigins);
+
+// Apply CORS first
 app.use(cors({
   origin: allowedOrigins,
-  credentials: true
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin']
 }));
+
+// Middleware
+app.use(express.json());
+app.use(cookieParser());
+
+// Health Check and Root Routes
+app.get('/', (req, res) => {
+  res.json({ message: 'Code Drop API is running...' });
+});
+
+app.get('/health', (req, res) => {
+  res.status(200).send('OK');
+});
 
 // Routes
 app.use('/api/posts', require('./src/routes/postRoutes'));
