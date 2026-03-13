@@ -1,0 +1,29 @@
+# Dependencies
+node_modules/
+
+# Environment variables - NEVER commit these
+.env
+.env.local
+.env.development
+.env.production
+**/.env
+**/.env.local
+**/.env.*
+
+# Build output
+dist/
+build/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Lint output files
+lint.json
+lint_*.json
+lint_*.txt
+**/lint_output.txt
+
+# OS files
+.DS_Store
+Thumbs.db
