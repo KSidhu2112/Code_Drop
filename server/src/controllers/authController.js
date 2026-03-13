@@ -69,16 +69,12 @@ const registerAdmin = async (req, res) => {
             });
         } catch (error) {
             console.error('Email Error:', error.message);
-            console.log('--- DEVELOPMENT OTP ---');
-            console.log(`Email: ${admin.email}`);
-            console.log(`OTP: ${otp}`);
-            console.log('-----------------------');
+            // OTP logging to server removed as per user request
 
-            // In dev mode, we still return 201 so the user can proceed by checking console
             res.status(201).json({
-                message: 'Admin registered. (Email delivery failed, check server console for OTP)',
+                message: 'Admin registered. (Email delivery failed)',
                 email: admin.email,
-                devMode: true
+                devMode: false
             });
         }
 
@@ -196,16 +192,12 @@ const forgotPassword = async (req, res) => {
 
             res.json({ message: 'OTP sent to your email successfully.' });
         } catch (error) {
-            // Email delivery failed (e.g. no SMTP config) — log OTP to console for dev use
             console.error('Email Error:', error.message);
-            console.log('--- DEVELOPMENT OTP (Admin Forgot Password) ---');
-            console.log(`Email: ${admin.email}`);
-            console.log(`OTP: ${otp}`);
-            console.log('-----------------------------------------------');
+            // OTP logging to server removed as per user request
 
             res.json({
-                message: 'OTP sent to email. (Email delivery failed, check server console for OTP)',
-                devMode: true
+                message: 'OTP could not be sent. (Email delivery failed)',
+                devMode: false
             });
         }
     } catch (error) {

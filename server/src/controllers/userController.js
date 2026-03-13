@@ -32,12 +32,8 @@ const sendOtpEmail = async ({ email, username, otp, type }) => {
         return { success: true };
     } catch (error) {
         console.error('📧 Email Error:', error.message);
-        console.log('--- DEVELOPMENT OTP ---');
-        console.log(`📧 Email: ${email}`);
-        console.log(`🔑 OTP: ${otp}`);
-        console.log(`📋 Type: ${type}`);
-        console.log('-----------------------');
-        return { success: false, devMode: true };
+        // OTP logging to server removed as per user request
+        return { success: false, devMode: false };
     }
 };
 
